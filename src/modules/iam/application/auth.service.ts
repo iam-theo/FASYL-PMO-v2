@@ -92,7 +92,13 @@ export class AuthService {
         { expiresIn: "1h" }
       );
 
-      return { accessToken };
+      const refreshToken = jwt.sign(
+        { uid: user.id },
+        this.REFRESH_SECRET,
+        { expiresIn: "7d" }
+      );
+
+      return { accessToken, refreshToken };
     } catch (error) {
       throw new UnauthorizedError("Invalid refresh token");
     }

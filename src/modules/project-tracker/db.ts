@@ -131,9 +131,9 @@ function seedDatabase(): DatabaseState {
   const teamMembers: TeamMember[] = [
     // Apollo ERP Team
     {
-      id: "tm-1",
+      id: "00000000-0000-0000-0000-000000000101",
       projectId: p1Id,
-      userId: "usr-alex",
+      userId: "00000000-0000-0000-0000-000000000001",
       name: "Alex Rivera",
       email: "alex.rivera@enterprise.com",
       role: "Lead Solutions Architect",
@@ -145,9 +145,9 @@ function seedDatabase(): DatabaseState {
       deletedAt: null
     },
     {
-      id: "tm-2",
+      id: "00000000-0000-0000-0000-000000000102",
       projectId: p1Id,
-      userId: "usr-sarah",
+      userId: "00000000-0000-0000-0000-000000000002",
       name: "Sarah Chen",
       email: "sarah.chen@enterprise.com",
       role: "Senior Backend Developer",
@@ -159,9 +159,9 @@ function seedDatabase(): DatabaseState {
       deletedAt: null
     },
     {
-      id: "tm-3",
+      id: "00000000-0000-0000-0000-000000000103",
       projectId: p1Id,
-      userId: "usr-marcus",
+      userId: "00000000-0000-0000-0000-000000000003",
       name: "Marcus Vance",
       email: "marcus.vance@enterprise.com",
       role: "QA Automation Engineer",
@@ -174,9 +174,9 @@ function seedDatabase(): DatabaseState {
     },
     // Zeus DevOps Team
     {
-      id: "tm-4",
+      id: "00000000-0000-0000-0000-000000000104",
       projectId: p2Id,
-      userId: "usr-elena",
+      userId: "00000000-0000-0000-0000-000000000004",
       name: "Elena Rostova",
       email: "elena.rostova@enterprise.com",
       role: "DevOps Tech Lead",
@@ -188,9 +188,9 @@ function seedDatabase(): DatabaseState {
       deletedAt: null
     },
     {
-      id: "tm-5",
+      id: "00000000-0000-0000-0000-000000000105",
       projectId: p2Id,
-      userId: "usr-dave",
+      userId: "00000000-0000-0000-0000-000000000005",
       name: "David Karr",
       email: "dave.karr@enterprise.com",
       role: "Cloud Engineer",
@@ -284,7 +284,7 @@ function seedDatabase(): DatabaseState {
       priority: TaskPriority.HIGH,
       startDate: "2026-05-02",
       dueDate: "2026-05-15",
-      assigneeId: "tm-1",
+      assigneeId: "00000000-0000-0000-0000-000000000001",
       milestoneId: "ms-1",
       labels: ["Database", "Design"],
       estimatedHours: 24,
@@ -303,7 +303,7 @@ function seedDatabase(): DatabaseState {
       priority: TaskPriority.MEDIUM,
       startDate: "2026-05-16",
       dueDate: "2026-05-25",
-      assigneeId: "tm-2",
+      assigneeId: "00000000-0000-0000-0000-000000000002",
       milestoneId: "ms-1",
       labels: ["Database", "Migration"],
       estimatedHours: 16,
@@ -322,7 +322,7 @@ function seedDatabase(): DatabaseState {
       priority: TaskPriority.HIGH,
       startDate: "2026-06-10",
       dueDate: "2026-07-15",
-      assigneeId: "tm-2",
+      assigneeId: "00000000-0000-0000-0000-000000000002",
       milestoneId: "ms-2",
       labels: ["Routing", "Security"],
       estimatedHours: 40,
@@ -341,7 +341,7 @@ function seedDatabase(): DatabaseState {
       priority: TaskPriority.MEDIUM,
       startDate: "2026-07-05",
       dueDate: "2026-07-28",
-      assigneeId: "tm-1",
+      assigneeId: "00000000-0000-0000-0000-000000000001",
       milestoneId: "ms-2",
       labels: ["Docker", "Microservice"],
       estimatedHours: 32,
@@ -360,7 +360,7 @@ function seedDatabase(): DatabaseState {
       priority: TaskPriority.LOW,
       startDate: "2026-06-15",
       dueDate: "2026-08-10",
-      assigneeId: "tm-3",
+      assigneeId: "00000000-0000-0000-0000-000000000003",
       milestoneId: "ms-2",
       labels: ["Testing", "QA"],
       estimatedHours: 45,
@@ -380,7 +380,7 @@ function seedDatabase(): DatabaseState {
       priority: TaskPriority.HIGH,
       startDate: "2026-06-02",
       dueDate: "2026-06-20",
-      assigneeId: "tm-4",
+      assigneeId: "00000000-0000-0000-0000-000000000004",
       milestoneId: "ms-4",
       labels: ["Terraform", "Cloud"],
       estimatedHours: 30,
@@ -399,7 +399,7 @@ function seedDatabase(): DatabaseState {
       priority: TaskPriority.URGENT,
       startDate: "2026-06-21",
       dueDate: "2026-06-29",
-      assigneeId: "tm-5",
+      assigneeId: "00000000-0000-0000-0000-000000000005",
       milestoneId: "ms-4",
       labels: ["Kubernetes", "EKS"],
       estimatedHours: 20,
@@ -418,7 +418,7 @@ function seedDatabase(): DatabaseState {
       priority: TaskPriority.MEDIUM,
       startDate: "2026-06-29",
       dueDate: "2026-07-15",
-      assigneeId: "tm-4",
+      assigneeId: "00000000-0000-0000-0000-000000000004",
       milestoneId: "ms-5",
       labels: ["Security", "CI"],
       estimatedHours: 16,
@@ -807,23 +807,25 @@ function seedDatabase(): DatabaseState {
     }
   ];
 
+  const chatMessages: ChatMessage[] = [];
+
   return {
-    projects: [],
-    teamMembers: [],
-    tasks: [],
-    subtasks: [],
-    milestones: [],
-    dependencies: [],
-    timeLogs: [],
-    issues: [],
-    risks: [],
-    deliverables: [],
-    documents: [],
-    comments: [],
-    meetings: [],
-    auditLogs: [],
-    notifications: [],
-    chatMessages: []
+    projects,
+    teamMembers,
+    tasks,
+    subtasks,
+    milestones,
+    dependencies,
+    timeLogs,
+    issues,
+    risks,
+    deliverables,
+    documents,
+    comments,
+    meetings,
+    auditLogs,
+    notifications,
+    chatMessages
   };
 }
 

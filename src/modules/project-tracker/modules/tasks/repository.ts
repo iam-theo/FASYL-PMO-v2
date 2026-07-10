@@ -3,6 +3,7 @@ import { Task, Subtask, Milestone, Dependency, TaskStatus } from "../../types.ts
 import { db } from "../../../../shared/database/index.ts";
 import { eq, inArray } from "drizzle-orm";
 import { tasks as pgTasksTable } from "../../../../db/schema.ts";
+import { eventBus, DomainEvents } from "../../../notifications/domain/events.ts";
 
 export class TasksRepository {
   // ==========================================
@@ -96,13 +97,19 @@ export class TasksRepository {
 
     dbState.tasks.push(newTask);
     saveDatabase();
+    
     if (newTask.assigneeId) {
-      await createNotification(
-        newTask.assigneeId,
-        "New Task Assigned",
-        `You have been assigned the task "${newTask.title}".`,
-        "TASK_ASSIGNED"
-      );
+      eventBus.publish(DomainEvents.TASK_ASSIGNED, {
+        userId: newTask.assigneeId,
+        payload: {
+          taskName: newTask.title,
+          dueDate: newTask.dueDate || "Not set",
+        },
+        entityInfo: {
+          type: "TASK",
+          id: newTask.id,
+        }
+      });
     }
     return newTask;
   }
@@ -164,13 +171,32 @@ export class TasksRepository {
     saveDatabase();
 
     if (newAssignee && newAssignee !== currentAssignee) {
-      await createNotification(
-        newAssignee,
-        "Task Assigned",
-        `You have been assigned the task "${dbState.tasks[index].title}".`,
-        "TASK_ASSIGNED"
-      );
+      eventBus.publish(DomainEvents.TASK_ASSIGNED, {
+        userId: newAssignee,
+        payload: {
+          taskName: dbState.tasks[index].title,
+          dueDate: dbState.tasks[index].dueDate || "Not set",
+        },
+        entityInfo: {
+          type: "TASK",
+          id: id,
+        }
+      });
     }
+    
+    if (data.status === TaskStatus.DONE && current.status !== TaskStatus.DONE) {
+      eventBus.publish(DomainEvents.TASK_COMPLETED, {
+        userId: current.assigneeId,
+        payload: {
+          taskName: current.title,
+        },
+        entityInfo: {
+          type: "TASK",
+          id: id,
+        }
+      });
+    }
+
     return dbState.tasks[index];
   }
 

@@ -32,7 +32,7 @@ export const requireAuth = (req: MockAuthRequest, res: Response, next: NextFunct
   } else {
     // Inject Default Sandbox Admin to ensure zero-config functionality in AI Studio preview
     req.user = {
-      id: "usr-alex",
+      id: "00000000-0000-0000-0000-000000000001", // Alex Rivera UUID
       name: "Alex Rivera",
       email: "alex.rivera@enterprise.com",
       role: "ADMIN"

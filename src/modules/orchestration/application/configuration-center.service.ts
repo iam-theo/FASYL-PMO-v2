@@ -40,6 +40,9 @@ export class ConfigurationCenterService {
             title: "Welcome to FASYL PMO Enterprise",
             body: "Hello {name}, your enterprise delivery account is activated.",
             sms: "FASYL PMO Account Activated: Hello {name}!",
+            emailEnabled: true,
+            smsEnabled: true,
+            inAppEnabled: true
           },
           category: "NOTIFICATION",
         },
@@ -48,6 +51,32 @@ export class ConfigurationCenterService {
           value: {
             title: "Project stage gate unlocked!",
             body: "Attention: Project '{projectName}' has successfully transitioned to Stage '{stageName}'.",
+            emailEnabled: true,
+            smsEnabled: false,
+            inAppEnabled: true
+          },
+          category: "NOTIFICATION",
+        },
+        {
+          key: "notification.templates.task_assigned",
+          value: {
+            title: "New Task Assigned: {taskTitle}",
+            body: "Hi {userName}, you have been assigned a new task: '{taskTitle}' in project '{projectName}'. Due date: {dueDate}.",
+            sms: "New Task: {taskTitle} assigned to you in {projectName}.",
+            emailEnabled: true,
+            smsEnabled: true,
+            inAppEnabled: true
+          },
+          category: "NOTIFICATION",
+        },
+        {
+          key: "notification.templates.task_completed",
+          value: {
+            title: "Task Completed: {taskTitle}",
+            body: "The task '{taskTitle}' in project '{projectName}' has been marked as completed by {userName}.",
+            emailEnabled: true,
+            smsEnabled: false,
+            inAppEnabled: true
           },
           category: "NOTIFICATION",
         },

@@ -14,6 +14,7 @@ import { IntegrationHubService } from "./integration-hub.service.ts";
 import { EventRegistryService } from "./event-registry.service.ts";
 import { SystemAdministrationService } from "./system-administration.service.ts";
 import { AiOrchestrationService } from "./ai-orchestration.service.ts";
+import { dbState } from "../../project-tracker/db.ts";
 
 export class OrchestrationService {
   private static instance: OrchestrationService | null = null;
@@ -256,6 +257,56 @@ export class OrchestrationService {
         logger.error({ err }, "[Orchestrator] Failed processing 'issue.identified' event");
       } finally {
         this.observability.endTrace(traceId);
+      }
+    });
+
+    // 6. Task Assigned
+    eventBus.subscribe("TASK_ASSIGNED", async (data: any) => {
+      try {
+        logger.info({ data }, "[Orchestrator] Received 'TASK_ASSIGNED' event.");
+        const taskId = data.entityInfo?.id || data.taskId;
+        const task = dbState.tasks.find(t => t.id === taskId);
+        const assignee = dbState.teamMembers.find(m => m.userId === data.userId || m.id === data.userId || m.userId === data.assigneeId);
+
+        if (task && assignee) {
+          await this.notificationCenter.send(
+            assignee.userId,
+            "IN_APP",
+            "notification.templates.task_assigned",
+            { 
+              userName: assignee.name, 
+              taskTitle: task.title, 
+              projectName: dbState.projects.find(p => p.id === task.projectId)?.name || "Unknown Project",
+              dueDate: task.dueDate || "N/A"
+            }
+          );
+        }
+      } catch (err) {
+        logger.error({ err }, "[Orchestrator] Failed processing 'TASK_ASSIGNED' event");
+      }
+    });
+
+    // 7. Task Completed
+    eventBus.subscribe("TASK_COMPLETED", async (data: any) => {
+      try {
+        logger.info({ data }, "[Orchestrator] Received 'TASK_COMPLETED' event.");
+        const taskId = data.entityInfo?.id || data.taskId;
+        const task = dbState.tasks.find(t => t.id === taskId);
+        const user = dbState.teamMembers.find(m => m.userId === data.userId || m.id === data.userId);
+
+        // Notify project owner/manager (Alex Rivera by default in this mock)
+        await this.notificationCenter.send(
+          "00000000-0000-0000-0000-000000000001",
+          "IN_APP",
+          "notification.templates.task_completed",
+          { 
+            userName: user?.name || "A team member", 
+            taskTitle: task?.title || "Unknown Task", 
+            projectName: dbState.projects.find(p => p.id === task?.projectId)?.name || "Unknown Project"
+          }
+        );
+      } catch (err) {
+        logger.error({ err }, "[Orchestrator] Failed processing 'TASK_COMPLETED' event");
       }
     });
   }

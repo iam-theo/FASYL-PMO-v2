@@ -26,6 +26,11 @@ export class NotificationCenterService {
 
       let title = template.title || "Alert";
       let body = template.body || "";
+      
+      const enabledChannels: ("IN_APP" | "EMAIL" | "SMS")[] = [];
+      if (template.inAppEnabled !== false) enabledChannels.push("IN_APP"); // Default to true if not specified
+      if (template.emailEnabled) enabledChannels.push("EMAIL");
+      if (template.smsEnabled) enabledChannels.push("SMS");
 
       // Replace placeholders
       for (const [key, value] of Object.entries(placeholders)) {
@@ -33,44 +38,49 @@ export class NotificationCenterService {
         body = body.replace(new RegExp(`{${key}}`, "g"), value);
       }
 
-      // Record dispatch in Delivery Notifications Table
-      const [record] = await db
-        .insert(deliveryNotifications)
-        .values({
-          recipientId,
-          channel,
-          title,
-          message: body,
-          status: "PENDING",
-          retries: 0,
-        })
-        .returning();
+      const results = [];
+      for (const targetChannel of enabledChannels) {
+        // Record dispatch in Delivery Notifications Table
+        const [record] = await db
+          .insert(deliveryNotifications)
+          .values({
+            recipientId,
+            channel: targetChannel as any,
+            title,
+            message: targetChannel === "SMS" && template.sms ? template.sms.replace(new RegExp(`{${Object.keys(placeholders).join("|")}|}`, "g"), (m: string) => placeholders[m.replace(/[{}]/g, "")] || m) : body,
+            status: "PENDING",
+            retries: 0,
+          })
+          .returning();
 
-      // Simulate channel connectors / handlers
-      this.dispatchToChannel(record.id, channel, title, body)
-        .then(async (success) => {
-          if (success) {
-            await db
-              .update(deliveryNotifications)
-              .set({
-                status: "SENT",
-                sentAt: new Date(),
-              })
-              .where(eq(deliveryNotifications.id, record.id));
-          } else {
-            await db
-              .update(deliveryNotifications)
-              .set({
-                status: "FAILED",
-              })
-              .where(eq(deliveryNotifications.id, record.id));
-          }
-        })
-        .catch((err) => {
-          logger.error({ err }, `Notification delivery thread failed for notification ${record.id}`);
-        });
+        // Simulate channel connectors / handlers
+        this.dispatchToChannel(record.id, targetChannel, title, body)
+          .then(async (success) => {
+            if (success) {
+              await db
+                .update(deliveryNotifications)
+                .set({
+                  status: "SENT",
+                  sentAt: new Date(),
+                })
+                .where(eq(deliveryNotifications.id, record.id));
+            } else {
+              await db
+                .update(deliveryNotifications)
+                .set({
+                  status: "FAILED",
+                })
+                .where(eq(deliveryNotifications.id, record.id));
+            }
+          })
+          .catch((err) => {
+            logger.error({ err }, `Notification delivery thread failed for notification ${record.id}`);
+          });
+        
+        results.push(record);
+      }
 
-      return record;
+      return results;
     } catch (err) {
       logger.error({ err }, `Failed to send unified notification to recipient: ${recipientId}`);
       throw err;

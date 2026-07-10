@@ -19,13 +19,13 @@ async function generateContentWithRetryAndFallback(params: {
   primaryModel?: string;
 }) {
   const primaryModel = params.primaryModel || "gemini-3.5-flash";
-  const fallbackModels = ["gemini-flash-latest", "gemini-3.1-flash-lite"];
+  const fallbackModels = ["gemini-1.5-flash", "gemini-1.5-pro"];
   
   const modelsToTry = [primaryModel, ...fallbackModels];
   let lastError: any = null;
 
   for (const model of modelsToTry) {
-    let attempts = 2;
+    let attempts = 1; // Reduced from 2 to save quota
     for (let attempt = 1; attempt <= attempts; attempt++) {
       try {
         console.log(`[Gemini Agent] Attempting generateContent with model: ${model} (Attempt ${attempt}/${attempts})`);

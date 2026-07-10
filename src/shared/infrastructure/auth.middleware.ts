@@ -24,7 +24,8 @@ export const authMiddleware = async (req: any, res: Response, next: NextFunction
     }
     req.user = decodedToken;
     next();
-  } catch (error) {
-    return next(new UnauthorizedError("Invalid token"));
+  } catch (error: any) {
+    console.error(`[AuthMiddleware] JWT Verification failed: ${error.message}`);
+    return next(new UnauthorizedError(error.name === "TokenExpiredError" ? "Token expired" : "Invalid token"));
   }
 };
