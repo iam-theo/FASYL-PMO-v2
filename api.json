@@ -1,0 +1,645 @@
+{
+  "info": {
+    "title": "AuraPM Enterprise Platform Orchestration Layer (EPOL) - API Specification",
+    "version": "1.0.0",
+    "description": "Comprehensive API reference for AuraPM Enterprise core services, including Project, Task, Risk, Security, Workflow, Program, Lifecycle, Orchestration, and Execution Tracker modules.",
+    "baseUrl": "/api",
+    "apiVersion": "v1"
+  },
+  "modules": [
+    {
+      "name": "Project Management",
+      "description": "Core project definition, financial planning, progress tracking, and timeline controls.",
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/projects",
+          "description": "Retrieve all project records with optional metadata parameters.",
+          "headers": {
+            "Authorization": "Bearer <JWT_TOKEN>"
+          },
+          "responses": {
+            "200": {
+              "description": "Array of active enterprise projects",
+              "sample": [
+                {
+                  "id": "e0bfa595-b6e9-40b1-b2a4-c12f62979be4",
+                  "name": "Apex Expansion Platform",
+                  "code": "APEX-2026",
+                  "status": "IN_PROGRESS",
+                  "budget": 250000.00,
+                  "progress": 65,
+                  "description": "Expanding AuraPM cloud capabilities to sovereign host clusters.",
+                  "startDate": "2026-01-15T00:00:00.000Z",
+                  "endDate": "2026-12-31T00:00:00.000Z",
+                  "createdAt": "2026-01-01T08:00:00.000Z"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/projects/:id",
+          "description": "Fetch unique project record details by ID.",
+          "params": {
+            "id": "UUID string"
+          },
+          "responses": {
+            "200": {
+              "description": "Individual project object",
+              "sample": {
+                "id": "e0bfa595-b6e9-40b1-b2a4-c12f62979be4",
+                "name": "Apex Expansion Platform",
+                "code": "APEX-2026",
+                "status": "IN_PROGRESS",
+                "budget": 250000.00,
+                "progress": 65,
+                "description": "Expanding AuraPM cloud capabilities to sovereign host clusters.",
+                "startDate": "2026-01-15T00:00:00.000Z",
+                "endDate": "2026-12-31T00:00:00.000Z"
+              }
+            },
+            "440": {
+              "description": "Project ID not found"
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/projects",
+          "description": "Initiate a new project inside the system. Requires authenticating credentials.",
+          "headers": {
+            "Authorization": "Bearer <JWT_TOKEN>",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "name": "Project Name (string, required)",
+            "code": "UPPERCASE unique project identifier code (string, required)",
+            "budget": "Total monetary budget (number, default: 0)",
+            "description": "Detailed scope guidelines (string, optional)",
+            "startDate": "ISO timestamp (string, optional)",
+            "endDate": "ISO timestamp (string, optional)"
+          },
+          "responses": {
+            "201": {
+              "description": "Project successfully initialized",
+              "sample": {
+                "id": "e0bfa595-b6e9-40b1-b2a4-c12f62979be4",
+                "name": "Apex Expansion Platform",
+                "code": "APEX-2026",
+                "status": "PLANNING",
+                "budget": 250000,
+                "progress": 0
+              }
+            }
+          }
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/projects/:id",
+          "description": "Update metadata parameters for an existing project record.",
+          "params": {
+            "id": "UUID string"
+          },
+          "body": {
+            "name": "Project Name (string)",
+            "status": "PLANNING | IN_PROGRESS | COMPLETED | ON_HOLD | ABORTED",
+            "budget": "Numeric budget limit",
+            "progress": "Integer value (0-100)",
+            "description": "Scope details"
+          },
+          "responses": {
+            "200": {
+              "description": "Project record updated successfully",
+              "sample": {
+                "id": "e0bfa595-b6e9-40b1-b2a4-c12f62979be4",
+                "status": "ON_HOLD",
+                "progress": 80
+              }
+            }
+          }
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/v1/projects/:id",
+          "description": "Surgical deletion of a project record and all associated cascade items.",
+          "params": {
+            "id": "UUID string"
+          },
+          "responses": {
+            "200": {
+              "description": "Deletion success log response",
+              "sample": {
+                "success": true,
+                "message": "Project record and child resources cascade deleted successfully."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Task Management",
+      "description": "Manage individual execution steps, assign tasks to corporate resources, and track statuses.",
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/tasks/project/:projectId",
+          "description": "Fetch all operational tasks associated with a project ID.",
+          "params": {
+            "projectId": "UUID string"
+          },
+          "responses": {
+            "200": {
+              "description": "Array of project tasks",
+              "sample": [
+                {
+                  "id": "a9bfa595-b6e9-40b1-b2a4-c12f62979be4",
+                  "projectId": "e0bfa595-b6e9-40b1-b2a4-c12f62979be4",
+                  "title": "Establish Host VPN Clusters",
+                  "description": "Routing secure network endpoints for regional nodes.",
+                  "status": "TODO",
+                  "priority": "HIGH",
+                  "dueDate": "2026-04-30T23:59:59.000Z",
+                  "assigneeId": "usr-991"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/tasks",
+          "description": "Log a new task in the work breakdown schedule.",
+          "body": {
+            "projectId": "UUID string (required)",
+            "title": "Task Header (string, required)",
+            "description": "Scope guidelines (string)",
+            "priority": "LOW | MEDIUM | HIGH | CRITICAL",
+            "dueDate": "ISO timestamp (string)",
+            "assigneeId": "Operator user ID (string)"
+          },
+          "responses": {
+            "201": {
+              "description": "Task created successfully",
+              "sample": {
+                "id": "a9bfa595-b6e9-40b1-b2a4-c12f62979be4",
+                "title": "Establish Host VPN Clusters",
+                "status": "TODO"
+              }
+            }
+          }
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/v1/tasks/:id/status",
+          "description": "Rapid update of execution status on a task.",
+          "params": {
+            "id": "UUID string"
+          },
+          "body": {
+            "status": "TODO | IN_PROGRESS | REVIEW | DONE | BLOCKED"
+          },
+          "responses": {
+            "200": {
+              "description": "Task status updated successfully",
+              "sample": {
+                "id": "a9bfa595-b6e9-40b1-b2a4-c12f62979be4",
+                "status": "IN_PROGRESS"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Issues & Risks",
+      "description": "Track project threats, risk matrices, issues severity logs, and register actionable mitigation workflows.",
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/risks-issues/project/:projectId",
+          "description": "Fetch issues and risks logged for a project.",
+          "params": {
+            "projectId": "UUID string"
+          },
+          "responses": {
+            "200": {
+              "description": "Risks & Issues registry lines",
+              "sample": [
+                {
+                  "id": "r1bfa595-b6e9-40b1-b2a4-c12f62979be4",
+                  "projectId": "e0bfa595-b6e9-40b1-b2a4-c12f62979be4",
+                  "title": "Regional Node IP Shortages",
+                  "type": "RISK",
+                  "severity": "CRITICAL",
+                  "status": "OPEN",
+                  "mitigationPlan": "Migrate to CIDR /22 block structure.",
+                  "ownerId": "usr-991"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/risks-issues",
+          "description": "Raise an issue or define an anticipated delivery risk.",
+          "body": {
+            "projectId": "UUID string (required)",
+            "title": "Title (string, required)",
+            "type": "RISK | ISSUE (required)",
+            "severity": "LOW | MEDIUM | HIGH | CRITICAL (required)",
+            "status": "OPEN | INVESTIGATING | RESOLVED | ACCEPTED (required)",
+            "mitigationPlan": "SOP strategy text (string)",
+            "ownerId": "User UID (string)"
+          },
+          "responses": {
+            "201": {
+              "description": "Threat registered in PMO log",
+              "sample": {
+                "id": "r1bfa595-b6e9-40b1-b2a4-c12f62979be4",
+                "title": "Regional Node IP Shortages",
+                "type": "RISK",
+                "severity": "CRITICAL"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Security & Authorization (RBAC & PBAC)",
+      "description": "Granular administrative control over enterprise roles, user profile footprints, direct overrides, and permissions mapping.",
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/users/me/profile",
+          "description": "Identify authenticated profile and resolve dynamic access permissions.",
+          "headers": {
+            "Authorization": "Bearer <JWT_TOKEN>"
+          },
+          "responses": {
+            "200": {
+              "description": "Personal footprint resolved data",
+              "sample": {
+                "userId": "user-pmo-99",
+                "email": "pmo.director@aurapm.com",
+                "roles": ["pmo_director"],
+                "permissions": [
+                  "admin.permissions",
+                  "admin.roles",
+                  "admin.role_assignment",
+                  "admin.logs",
+                  "projects.create",
+                  "projects.delete"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/auth/matrix",
+          "description": "Fetch active permissions mapping matrix per enterprise role.",
+          "headers": {
+            "Authorization": "Bearer <JWT_TOKEN>"
+          },
+          "responses": {
+            "200": {
+              "description": "System role mapped permissions",
+              "sample": {
+                "pmo_director": [
+                  "projects.create",
+                  "projects.delete",
+                  "admin.roles",
+                  "admin.logs"
+                ],
+                "project_manager": [
+                  "projects.create",
+                  "tasks.create",
+                  "tasks.update"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/roles",
+          "description": "Establish a custom corporate role inside RBAC registry.",
+          "body": {
+            "code": "unique_role_snake_case (string, required)",
+            "name": "Display Name (string, required)",
+            "description": "Operational scope (string, optional)",
+            "permissions": "List of permission keys (string[], required)"
+          },
+          "responses": {
+            "201": {
+              "description": "Role registered",
+              "sample": {
+                "code": "pmo_auditor",
+                "name": "PMO Compliance Auditor",
+                "permissions": ["admin.logs", "projects.view"]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Workflow Governance Engine",
+      "description": "Establish automated, stateful workflow templates, instantiate engines, transition steps, and collect approvals.",
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/workflows/templates",
+          "description": "Fetch preset PMO workflow pattern definitions.",
+          "responses": {
+            "200": {
+              "description": "Active workflow templates array",
+              "sample": [
+                {
+                  "code": "CHANGE_CONTROL",
+                  "name": "Standard Change Control Loop",
+                  "steps": ["DRAFT", "TECHNICAL_REVIEW", "CAB_APPROVAL", "COMMITTED"]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/workflows/:id/start",
+          "description": "Boot an active running workflow engine instance.",
+          "params": {
+            "id": "Template ID string"
+          },
+          "body": {
+            "projectId": "Target project UUID (string, required)",
+            "initiatorId": "User UID initiating request (string, required)"
+          },
+          "responses": {
+            "201": {
+              "description": "Workflow engine active",
+              "sample": {
+                "instanceId": "wf-inst-7711",
+                "templateId": "CHANGE_CONTROL",
+                "currentStep": "DRAFT",
+                "status": "RUNNING"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Executive Program Management (PMO)",
+      "description": "High-level governance dashboard grouping projects, capacity supply vs demand tracking, cost centers, and EVM trend indexes.",
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/enterprise/programs/:id/dashboard",
+          "description": "Query live consolidated dashboard financials and milestones stats for a major program.",
+          "params": {
+            "id": "Program ID"
+          },
+          "responses": {
+            "200": {
+              "description": "Consolidated program stats dashboard coordinates",
+              "sample": {
+                "programId": "prg-101",
+                "totalBudget": 1200000.00,
+                "utilizedBudget": 745000.00,
+                "projectsCount": 5,
+                "scheduleAdherencePercentage": 92.5,
+                "varianceIndices": {
+                  "cost": -12000.00,
+                  "schedule": 8500.00
+                }
+              }
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/enterprise/resources/allocations",
+          "description": "Allocate a corporate specialist to a target project with capacity booking constraints.",
+          "body": {
+            "resourceId": "Resource UUID (string, required)",
+            "projectId": "Project UUID (string, required)",
+            "role": "Allocated functional role title (string, required)",
+            "allocationPercentage": "Integer booking metric (number, 1-100)",
+            "startDate": "ISO Timestamp",
+            "endDate": "ISO Timestamp"
+          },
+          "responses": {
+            "201": {
+              "description": "Allocation recorded",
+              "sample": {
+                "id": "alloc-9922",
+                "resourceId": "r-001",
+                "projectId": "e0bfa595-b6e9-40b1-b2a4-c12f62979be4",
+                "allocationPercentage": 50
+              }
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/enterprise/finances/projects/:id/evm",
+          "description": "Execute Earned Value Management algorithm against actual delivery metrics.",
+          "params": {
+            "id": "Project UUID string"
+          },
+          "body": {
+            "plannedValue": "Budgeted Cost of Work Scheduled (number, required)",
+            "actualCost": "Actual Cost of Work Performed (number, required)"
+          },
+          "responses": {
+            "200": {
+              "description": "EVM analysis indicators",
+              "sample": {
+                "earnedValue": 162500.00,
+                "scheduleVariance": -12500.00,
+                "costVariance": 15000.00,
+                "spi": 0.93,
+                "cpi": 1.10,
+                "status": "AHEAD_ON_BUDGET_BEHIND_ON_SCHEDULE"
+              }
+            }
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/enterprise/ai/projects/:id/delay-prediction",
+          "description": "Brokered Gemini AI assistant predicting delivery slippages based on real-time trends.",
+          "params": {
+            "id": "Project UUID"
+          },
+          "responses": {
+            "200": {
+              "description": "AI delay predictions",
+              "sample": {
+                "delayProbability": 0.35,
+                "anticipatedSlippageDays": 14,
+                "assessmentSummary": "Slight bottlenecks detected around Phase 2 network configurations. Resources recommend high probability of meeting target SLA if external consultant assigned.",
+                "mitigationSteps": [
+                  "Assign expert security architect to expedite VPN setup",
+                  "Extend testing period by 4 working days"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Stage-Gate SLA Governance",
+      "description": "Rule-based lifecycle gating, document certification, and operations gatekeeper controls.",
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/lifecycle/instances/:projectId",
+          "description": "Fetch stage-gate progression checklist items and required documents status.",
+          "params": {
+            "projectId": "Project UUID"
+          },
+          "responses": {
+            "200": {
+              "description": "Governance state metrics",
+              "sample": {
+                "instanceId": "lc-inst-881",
+                "activeStage": "STAGE_1_INITIATION",
+                "slaRemainingHours": 72,
+                "documents": [
+                  {
+                    "id": "doc-req-1",
+                    "title": "Business Case Specification",
+                    "status": "APPROVED",
+                    "fileUrl": "https://storage.aurapm.com/docs/APEX-BC.pdf"
+                  }
+                ],
+                "checklists": [
+                  {
+                    "id": "chk-1-1",
+                    "text": "Identify stakeholder committee",
+                    "complete": true
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/lifecycle/instances/:instanceId/stages/:stageId/operations-review",
+          "description": "Head of Operations master gatekeeper signoff to authorize stage progression.",
+          "params": {
+            "instanceId": "Lifecycle UUID",
+            "stageId": "Stage identifier"
+          },
+          "body": {
+            "decision": "PROMOTED | REJECTED (required)",
+            "feedback": "Board review notes (string)"
+          },
+          "responses": {
+            "200": {
+              "description": "Gating decision results",
+              "sample": {
+                "success": true,
+                "newActiveStage": "STAGE_2_PLANNING",
+                "message": "Lifecycle instance successfully promoted to STAGE_2_PLANNING."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Enterprise Platform Orchestration Layer (EPOL)",
+      "description": "Administrative system settings, configurations store, scheduler jobs control, event catalogs, and immutable operational audit ledger.",
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/orchestration/health",
+          "description": "Telemetry parameters and health checks metrics across microservices.",
+          "responses": {
+            "200": {
+              "description": "Diagnostic health indexes",
+              "sample": {
+                "status": "healthy",
+                "uptimeSeconds": 172800,
+                "systemTelemetry": {
+                  "cpuUsagePercentage": 14.2,
+                  "heapUsedMB": 128.5,
+                  "heapTotalMB": 512.0
+                },
+                "connections": {
+                  "postgres": "CONNECTED",
+                  "redis": "CONNECTED",
+                  "firebaseAdmin": "INITIALIZED"
+                }
+              }
+            }
+          }
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/orchestration/configs/bulk",
+          "description": "Bulk commit updates to multiple system threshold configurations in a single transactional batch.",
+          "body": {
+            "actorId": "Audited User UID (string, required)",
+            "configs": [
+              {
+                "key": "SLA key string (required)",
+                "value": "JSON compatible settings (any, required)",
+                "category": "SLA | FEATURE_FLAGS | AI | CALENDAR | NOTIFICATION | FINANCE (required)"
+              }
+            ]
+          },
+          "responses": {
+            "200": {
+              "description": "Bulk save report success",
+              "sample": {
+                "success": true,
+                "message": "Successfully bulk updated 2 configurations."
+              }
+            }
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/orchestration/audit",
+          "description": "Read operational ledger records with advanced filters, full-text search, column-level sorting, and offsets limit pagination.",
+          "params": {
+            "actorId": "Filter logs by actor ID (query)",
+            "moduleName": "Filter logs by module name (query)",
+            "action": "Filter logs by operational action verb (query)",
+            "search": "Full-text search query across actions/details (query)",
+            "sortField": "Sort column (query, default: createdAt)",
+            "sortOrder": "ASC | DESC (query, default: DESC)",
+            "limit": "Max lines count (query, default: 100)",
+            "offset": "Skip records count (query, default: 0)"
+          },
+          "responses": {
+            "200": {
+              "description": "Paginated and filtered audit trail records",
+              "sample": [
+                {
+                  "id": "184",
+                  "actorId": "admin-system",
+                  "action": "SET_CONFIG",
+                  "moduleName": "ORCHESTRATION",
+                  "details": "{\"key\":\"sla.warning.hours\",\"value\":48}",
+                  "createdAt": "2026-07-03T06:10:00.000Z"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

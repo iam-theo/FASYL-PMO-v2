@@ -1,0 +1,336 @@
+{
+  "name": "AuraPM Enterprise",
+  "version": "1",
+  "items": [
+    {
+      "name": "Identity & Auth (RBAC & PBAC)",
+      "items": [
+        {
+          "type": "http",
+          "name": "Get Authenticated Profile",
+          "request": {
+            "url": "{{base_url}}/auth/users/me/profile",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "type": "http",
+          "name": "List System Permissions",
+          "request": {
+            "url": "{{base_url}}/auth/permissions",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "type": "http",
+          "name": "Search Permissions",
+          "request": {
+            "url": "{{base_url}}/auth/permissions/search?query=projects",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get Auth Matrix",
+          "request": {
+            "url": "{{base_url}}/auth/matrix",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "type": "http",
+          "name": "List Roles",
+          "request": {
+            "url": "{{base_url}}/auth/roles",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Project Portfolio Management",
+      "items": [
+        {
+          "type": "http",
+          "name": "List Projects",
+          "request": {
+            "url": "{{base_url}}/projects",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "type": "http",
+          "name": "Create Project",
+          "request": {
+            "url": "{{base_url}}/projects",
+            "method": "POST",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"name\": \"Apex Expansion Platform\",\n  \"code\": \"APEX-2026\",\n  \"budget\": 250000\n}"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get Project by ID",
+          "request": {
+            "url": "{{base_url}}/projects/e0bfa595-b6e9-40b1-b2a4-c12f62979be4",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "type": "http",
+          "name": "Update Project",
+          "request": {
+            "url": "{{base_url}}/projects/e0bfa595-b6e9-40b1-b2a4-c12f62979be4",
+            "method": "PUT",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"name\": \"Apex Expansion Platform v2\",\n  \"status\": \"IN_PROGRESS\",\n  \"budget\": 280000,\n  \"progress\": 15\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tasks & Execution Scheduler",
+      "items": [
+        {
+          "type": "http",
+          "name": "List Tasks by Project",
+          "request": {
+            "url": "{{base_url}}/tasks/project/e0bfa595-b6e9-40b1-b2a4-c12f62979be4",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "type": "http",
+          "name": "Create Task",
+          "request": {
+            "url": "{{base_url}}/tasks",
+            "method": "POST",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"projectId\": \"e0bfa595-b6e9-40b1-b2a4-c12f62979be4\",\n  \"title\": \"Establish Host VPN Clusters\",\n  \"priority\": \"HIGH\",\n  \"dueDate\": \"2026-04-30T23:59:59.000Z\"\n}"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Update Task Status",
+          "request": {
+            "url": "{{base_url}}/tasks/a9bfa595-b6e9-40b1-b2a4-c12f62979be4/status",
+            "method": "PATCH",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"status\": \"IN_PROGRESS\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Workflow Governance Engine",
+      "items": [
+        {
+          "type": "http",
+          "name": "List Workflow Templates",
+          "request": {
+            "url": "{{base_url}}/workflows/templates",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "type": "http",
+          "name": "Trigger Workflow Lifecycle",
+          "request": {
+            "url": "{{base_url}}/workflows/CHANGE_CONTROL/start",
+            "method": "POST",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"projectId\": \"e0bfa595-b6e9-40b1-b2a4-c12f62979be4\",\n  \"initiatorId\": \"user-pmo-99\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orchestration & Administration (EPOL)",
+      "items": [
+        {
+          "type": "http",
+          "name": "System Health Status",
+          "request": {
+            "url": "{{base_url}}/orchestration/health",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "type": "http",
+          "name": "Bulk Update System Thresholds",
+          "request": {
+            "url": "{{base_url}}/orchestration/configs/bulk",
+            "method": "POST",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"actorId\": \"admin-system\",\n  \"configs\": [\n    {\n      \"key\": \"sla.warning.hours\",\n      \"value\": 48,\n      \"category\": \"SLA\"\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Fetch Change Audit Logs",
+          "request": {
+            "url": "{{base_url}}/orchestration/audit?limit=50&offset=0",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "environments": [
+    {
+      "name": "AuraPM Production Sandbox",
+      "variables": [
+        {
+          "name": "base_url",
+          "value": "http://localhost:3000/api/v1",
+          "type": "text",
+          "enabled": true
+        },
+        {
+          "name": "token",
+          "value": "pmo_master_token_secret_jwt",
+          "type": "text",
+          "enabled": true
+        }
+      ]
+    }
+  ]
+}

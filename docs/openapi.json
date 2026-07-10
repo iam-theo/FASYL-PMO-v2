@@ -1,0 +1,265 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AuraPM Enterprise Platform API Contract",
+    "description": "Comprehensive Master API Contract for AuraPM Enterprise Platform Orchestration Layer (EPOL) and all integrated modules.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "AuraPM Enterprise Architecture",
+      "email": "architecture@aurapm.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "Local Container Proxy Gateway"
+    }
+  ],
+  "paths": {
+    "/auth/users/me/profile": {
+      "get": {
+        "summary": "Resolve active user authenticated identity and permissions footprint",
+        "operationId": "getUserProfile",
+        "tags": [
+          "Security & Identity"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StandardSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/matrix": {
+      "get": {
+        "summary": "Get dynamic roles to permissions configuration matrix",
+        "operationId": "getAuthMatrix",
+        "tags": [
+          "Security & Identity"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StandardSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects": {
+      "get": {
+        "summary": "Retrieve project catalog with filters, search, and sorting controls",
+        "operationId": "getProjects",
+        "tags": [
+          "Project Portfolio"
+        ],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Full-text search on code or title"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StandardSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new project record and initialize stage-gates",
+        "operationId": "createProject",
+        "tags": [
+          "Project Portfolio"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "code"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string"
+                  },
+                  "budget": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Created"
+            }
+          }
+        }
+      }
+    },
+    "/orchestration/configs/bulk": {
+      "post": {
+        "summary": "Batch update configuration parameters transactionally",
+        "operationId": "bulkUpdateConfigs",
+        "tags": [
+          "System Administration"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "configs",
+                  "actorId"
+                ],
+                "properties": {
+                  "actorId": {
+                    "type": "string"
+                  },
+                  "configs": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "key",
+                        "value",
+                        "category"
+                      ],
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "object"
+                        },
+                        "category": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      }
+    },
+    "/orchestration/audit": {
+      "get": {
+        "summary": "Retrieve paginated regulatory audit logs",
+        "operationId": "getAuditLogs",
+        "tags": [
+          "System Administration"
+        ],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "StandardSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Operation successfully executed"
+          },
+          "data": {
+            "type": "object"
+          }
+        }
+      },
+      "StandardErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          },
+          "traceId": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

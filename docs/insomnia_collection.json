@@ -1,0 +1,54 @@
+{
+  "__export_format": 4,
+  "__export_date": "2026-07-03T06:30:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "wrk_1",
+      "parentId": null,
+      "modified": 1728000000000,
+      "created": 1728000000000,
+      "name": "AuraPM Workspace",
+      "description": "Insomnia Workspace mappings for all modular AuraPM endpoints.",
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_1",
+      "parentId": "wrk_1",
+      "modified": 1728000000000,
+      "created": 1728000000000,
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:3000/api/v1"
+      },
+      "dataPropertyOrder": {
+        "&": [
+          "base_url"
+        ]
+      },
+      "color": null,
+      "isPrivate": false,
+      "_type": "environment"
+    },
+    {
+      "_id": "req_1",
+      "parentId": "wrk_1",
+      "modified": 1728000000000,
+      "created": 1728000000000,
+      "url": "{{ _.base_url }}/projects",
+      "name": "Fetch Projects Collection",
+      "method": "GET",
+      "body": {},
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer token_secret"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1728000000000,
+      "isPrivate": false,
+      "_type": "request"
+    }
+  ]
+}

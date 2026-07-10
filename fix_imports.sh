@@ -1,0 +1,1 @@
+sed -i 's/import { pgTable, uuid, text, timestamp, boolean, varchar, pgEnum, integer, decimal, index, uniqueIndex } from "drizzle-orm\/pg-core";/import { pgTable, uuid, text, timestamp, boolean, varchar, pgEnum, integer, decimal, index, uniqueIndex, jsonb } from "drizzle-orm\/pg-core";\nimport { sql } from "drizzle-orm";/' src/db/schema.ts

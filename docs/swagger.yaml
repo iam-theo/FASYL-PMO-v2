@@ -1,0 +1,161 @@
+swagger: "2.0"
+info:
+  title: AuraPM Enterprise Platform Swagger Specification
+  description: Comprehensive Swagger v2 reference specification for AuraPM Enterprise Platform Orchestration Layer (EPOL) core service API layers.
+  version: 1.0.0
+  contact:
+    name: AuraPM Enterprise Architecture
+    email: architecture@aurapm.com
+host: localhost:3000
+basePath: /api/v1
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /auth/users/me/profile:
+    get:
+      summary: Resolve active user authenticated identity and permissions footprint
+      operationId: getUserProfile
+      tags:
+        - Security & Identity
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/StandardSuccessResponse'
+  /auth/matrix:
+    get:
+      summary: Get dynamic roles to permissions configuration matrix
+      operationId: getAuthMatrix
+      tags:
+        - Security & Identity
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/StandardSuccessResponse'
+  /projects:
+    get:
+      summary: Retrieve project catalog with filters, search, and sorting controls
+      operationId: getProjects
+      tags:
+        - Project Portfolio
+      parameters:
+        - name: search
+          in: query
+          type: string
+          description: Full-text search on code or title
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/StandardSuccessResponse'
+    post:
+      summary: Create a new project record and initialize stage-gates
+      operationId: createProject
+      tags:
+        - Project Portfolio
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            required:
+              - name
+              - code
+            properties:
+              name:
+                type: string
+              code:
+                type: string
+              budget:
+                type: number
+      responses:
+        '201':
+          description: Created
+  /orchestration/configs/bulk:
+    post:
+      summary: Batch update configuration parameters transactionally
+      operationId: bulkUpdateConfigs
+      tags:
+        - System Administration
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            required:
+              - configs
+              - actorId
+            properties:
+              actorId:
+                type: string
+              configs:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - key
+                    - value
+                    - category
+                  properties:
+                    key:
+                      type: string
+                    value:
+                      type: object
+                    category:
+                      type: string
+      responses:
+        '200':
+          description: Success
+  /orchestration/audit:
+    get:
+      summary: Retrieve paginated regulatory audit logs
+      operationId: getAuditLogs
+      tags:
+        - System Administration
+      parameters:
+        - name: search
+          in: query
+          type: string
+        - name: limit
+          in: query
+          type: integer
+        - name: offset
+          in: query
+          type: integer
+      responses:
+        '200':
+          description: Success
+definitions:
+  StandardSuccessResponse:
+    type: object
+    properties:
+      success:
+        type: boolean
+        default: true
+      message:
+        type: string
+      data:
+        type: object
+  StandardErrorResponse:
+    type: object
+    properties:
+      success:
+        type: boolean
+        default: false
+      error:
+        type: object
+        properties:
+          code:
+            type: string
+          message:
+            type: string
+      traceId:
+        type: string

@@ -1,0 +1,198 @@
+{
+  "info": {
+    "_postman_id": "7cbfa595-b6e9-40b1-b2a4-c12f62979be4",
+    "name": "AuraPM Enterprise API Bible",
+    "description": "Postman Collection mapping all core endpoints of the AuraPM EPOL runtime engine.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Identity & Auth",
+      "item": [
+        {
+          "name": "Get Authenticated Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/users/me/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "users",
+                "me",
+                "profile"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Authorization Permissions Matrix",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/matrix",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "matrix"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Projects",
+      "item": [
+        {
+          "name": "List Projects",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/projects?search=&limit=100",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "projects"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "limit",
+                  "value": "100"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Project",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Apex expansion project\",\n  \"code\": \"APEX-2026\",\n  \"budget\": 350000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "projects"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orchestration & Audit",
+      "item": [
+        {
+          "name": "Fetch Change Audit Logs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/orchestration/audit?search=CONVERT&limit=50&offset=0",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orchestration",
+                "audit"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "CONVERT"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Bulk Save Threshold Configs",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"actorId\": \"admin-user\",\n  \"configs\": [\n    {\n      \"key\": \"sla.warning.hours\",\n      \"value\": 48,\n      \"category\": \"SLA\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orchestration/configs/bulk",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orchestration",
+                "configs",
+                "bulk"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
